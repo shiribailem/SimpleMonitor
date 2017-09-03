@@ -13,6 +13,9 @@ import yaml
 # Use a proxy so that database can be selected in configuration.
 database_proxy = peewee.Proxy()
 
+# Make empty config to avoid any out-of-order reference confusion
+config = {}
+
 class Monitor(peewee.Model):
     #primary_id = peewee.IntegerField(primary_key=True)
     timestamp = peewee.DateTimeField(index=True, default=datetime.now)
@@ -63,10 +66,12 @@ def monitor_update():
 
     secret = request.args.get('secret')
 
-    if len(secret) == 0:
+    if len(secret) == 0 or not secret in config['secrets'].keys():
         return "Invalid Secret"
 
-    Monitor(source=secret, tag=tag, value=value).save()
+    source = config['secrets'][secret]
+
+    Monitor(source=source, tag=tag, value=value).save()
 
     return json.dumps({tag: value})
 
@@ -76,14 +81,23 @@ if exists("./simplemonitor.conf"):
     filename = "./simplemonitor.conf"
 elif exists(expanduser("~/.simplemonitor.conf")):
     filename = expanduser("~/.simplemonitor.conf")
-else:
+elif exists("/etc/simplemonitor/simplemonitor.conf"):
     filename = "/etc/simplemonitor/simplemonitor.conf"
+else:
+    print("No configuration file found!")
+    exit(1)
+
+# Load config file
 
 with open(filename, 'r') as config_file:
     config = yaml.load(config_file.read())
 
+# Connect to database given in config
+
 database_proxy.initialize(dbconnect(config['db_url']))
 database_proxy.connect()
+
+# Make sure tables exist
 database_proxy.create_tables([Monitor], safe=True)
 
 if __name__ == '__main__':
