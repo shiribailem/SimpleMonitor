@@ -52,28 +52,28 @@ def monitor_update():
         assert not request.args.get('value') is None
         assert not request.args.get('secret') is None
     except AssertionError:
-        return "Error"
+        return "Error\n"
 
     tag = request.args.get('tag')
 
     if len(tag) == 0:
-        return "Invalid Tag"
+        return "Invalid Tag\n"
     
     try:
         value = float(request.args.get('value'))
     except ValueError:
-        return "Invalid Value"
+        return "Invalid Value\n"
 
     secret = request.args.get('secret')
 
     if len(secret) == 0 or not secret in config['secrets'].keys():
-        return "Invalid Secret"
+        return "Invalid Secret\n"
 
     source = config['secrets'][secret]
 
     Monitor(source=source, tag=tag, value=value).save()
 
-    return json.dumps({tag: value})
+    return json.dumps({tag: value}) + '\n'
 
 # Find config file
 
