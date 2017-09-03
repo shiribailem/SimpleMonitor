@@ -1,0 +1,13 @@
+# Place this in /etc/systemd/system/monitor.service
+# chmod to 644 and run "systemctl daemon-reload"
+# You will then be able to launch with "systemctl start monitor"
+
+[Unit]
+Description=Simplemonitor Service
+
+[Service]
+Type=simple
+# Recommended: create a monitor user and uncomment the following.
+# User=monitor
+ExecStart=/bin/python /opt/SimpleMonitor/simplemonitor.py
+
