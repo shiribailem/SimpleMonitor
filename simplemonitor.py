@@ -99,6 +99,8 @@ database_proxy.connect()
 # Make sure tables exist
 database_proxy.create_tables([Monitor], safe=True)
 
+database_proxy.close()
+
 if __name__ == '__main__':
     if not "bind_ip" in config.keys():
         ip = "127.0.0.1"
