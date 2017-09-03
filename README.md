@@ -76,3 +76,28 @@ the command line.
 Initially I do not plan on implementing notifications. However I imagine that I
 will likely attach them as a step in accepting the update requests from 
 collectors.
+
+# Current Status
+
+## Implemented
+
+* Uses Flask (web interface and request handling), Peewee (database), and 
+  PyYaml (configuration files)
+* Searches for mandatory configuration files in the following order:
+  - ./simplemonitor.conf
+  - ~/.simplemonitor.conf
+  - /etc/simplemonitor/simplemonitor.conf
+* db_url config option allows passing db configuration directly to peewee
+* bind_ip and bind_port can optionally be specified (defaults to "127.0.0.1" and
+  9999)
+* Uses secrets list in config file for minimal authentication and 
+  identification. See examples directory for an example.
+* Requirements can be installed with "pip install -r requirements.txt"
+* Data can be inserted by making a get request to 
+  http://<hostname/ip>:<port>/api/update?secret=<secret>&tag=<arbitrary string>&value=<arbitrary signed float>
+
+## Caveats
+
+* There's currently no built in method for viewing data. However, database is 
+  not kept open when not in use, so sqlite copies can be copied and read in any 
+  sqlite browser. All data is in "Monitor" table in a self-explanitory layout.
