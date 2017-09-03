@@ -9,7 +9,7 @@ app = Flask(__name__)
 def index():
     return "Hello World!"
 
-@app.route('/api/update', methods=['POST', 'GET'])
+@app.route('/api/update', methods=['GET'])
 def monitor_update():
     try:
         assert not request.args.get('tag') is None
