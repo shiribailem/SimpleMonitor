@@ -25,7 +25,6 @@ class Monitor(peewee.Model):
     
     class Meta:
         database = database_proxy
-    
 
 # Flask Code
 
@@ -101,4 +100,19 @@ database_proxy.connect()
 database_proxy.create_tables([Monitor], safe=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    if not "bind_ip" in config.keys():
+        ip = "127.0.0.1"
+    else:
+        ip = config["bind_ip"]
+
+    if not "bind_port" in config.keys():
+        port = 9999
+    else:
+        port = int(config["bind_port"])
+
+    if "debug" in config.keys():
+        debug = config["debug"]
+    else:
+        debug = False
+
+    app.run(debug=debug, host=ip, port=port)
